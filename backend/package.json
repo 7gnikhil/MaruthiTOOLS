@@ -1,0 +1,27 @@
+{
+  "name": "maruthi-toolings-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Maruthi Toolings",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "seed:careers": "npx ts-node --esm src/seed/careers.seed.ts"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "mongoose": "^8.4.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2"
+  }
+}
