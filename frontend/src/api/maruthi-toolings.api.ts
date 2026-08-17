@@ -1,8 +1,8 @@
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+    return import.meta.env.VITE_API_URL.replace(/\/$/, '');
   }
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return 'http://localhost:5000';
   }
   return '';
@@ -26,17 +26,14 @@ export const submitInquiry = async (formData: {
     });
 
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      throw new Error(`Server error (${response.status}): Failed to save inquiry to MongoDB`);
     }
 
     const data = await response.json();
     return data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error submitting inquiry to backend/MongoDB:', error);
-    // Graceful fallback message if server is offline during dev
-    return {
-      message: '✅ Your message has been recorded! Our team at Maruthi Toolings will reach out to you within 24 hours.',
-    };
+    throw error;
   }
 };
 

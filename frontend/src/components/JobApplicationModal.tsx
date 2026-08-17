@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons';
+import { getApiBaseUrl } from '../api/maruthi-toolings.api';
 
 interface JobApplicationModalProps {
   positionTitle: string;
@@ -94,7 +95,7 @@ const JobApplicationModal: React.FC<JobApplicationModalProps> = ({
 
     try {
       // API base URL helper
-      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiBase = getApiBaseUrl();
 
       const payload = {
         position: positionTitle,
