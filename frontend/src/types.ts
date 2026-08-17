@@ -12,6 +12,18 @@ export type Page =
 // Product category: 'Mould' | 'CNC' | 'EDM' | 'End Component'
 export type ProductCategory = 'Mould' | 'CNC' | 'EDM' | 'End Component';
 
+export interface MouldSpecs {
+  cavitation?: string;
+  steelGrade?: string;
+  runnerType?: string;
+  ejectionSystem?: string;
+  moldLife?: string;
+  tolerance?: string;
+  leadTime?: string;
+  applications?: string[];
+  features?: string[];
+}
+
 export interface Product {
   _id?: string;
   name: string;
@@ -20,6 +32,7 @@ export interface Product {
   imageUrl: string;
   gallery?: string[];
   updatedAt: Date;
+  specs?: MouldSpecs;
 }
 
 export interface CareerPost {

@@ -18,13 +18,13 @@ const App: React.FC = () => {
       case 'Home':
         return <HomePage setCurrentPage={setCurrentPage} />;
       case 'Products':
-        return <Products view="all" />;
+        return <Products view="all" onRequestQuote={() => setCurrentPage('Contact Us')} />;
       case 'Moulds':
-        return <Products view="moulds" title="Moulds" />;
+        return <Products view="moulds" title="Moulds" onRequestQuote={() => setCurrentPage('Contact Us')} />;
       case 'Machinery':
-        return <Products view="machinery" title="Workshop Machinery" />;
+        return <Products view="machinery" title="Workshop Machinery" onRequestQuote={() => setCurrentPage('Contact Us')} />;
       case 'End Components':
-        return <Products view="end-components" title="End Components" />;
+        return <Products view="end-components" title="End Components" onRequestQuote={() => setCurrentPage('Contact Us')} />;
       case 'Services':
         return <Services />;
       case 'About Us':

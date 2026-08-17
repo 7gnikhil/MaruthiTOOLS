@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Page } from '../types';
 import { MOCK_PRODUCTS_DB, MOCK_SERVICES_DB } from '../api/mock-data';
 
@@ -51,20 +51,38 @@ const whyUs = [
 const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
   const featuredMoulds = MOCK_PRODUCTS_DB.filter(p => p.category === 'Mould').slice(0, 4);
   const heroRef = useRef<HTMLDivElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+  const [isGlowing, setIsGlowing] = useState(false);
 
-  // Parallax on hero
   useEffect(() => {
     const handleScroll = () => {
+      setScrollY(window.scrollY);
       if (heroRef.current) {
         heroRef.current.style.transform = `translateY(${window.scrollY * 0.35}px)`;
       }
     };
+
+    const handleCompanyNameClick = () => {
+      setIsGlowing(true);
+      setTimeout(() => setIsGlowing(false), 1200);
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('company-name-click', handleCompanyNameClick);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('company-name-click', handleCompanyNameClick);
+    };
   }, []);
 
+  // Calculate dynamic transition parameters based on scroll down / up
+  const headingOpacity = Math.max(0, 1 - scrollY / 160);
+  const headingTranslateY = -Math.min(scrollY * 0.5, 60);
+  const headingScale = Math.max(0.85, 1 - scrollY / 600);
+
   return (
-    <div className="bg-white">
+    <div className="bg-white pt-16">
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative h-[92vh] min-h-[600px] flex items-center overflow-hidden bg-[#05101f]">
@@ -78,20 +96,40 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#05101f] via-[#05101fcc] to-transparent" />
 
         <div className="relative z-10 container mx-auto px-6 md:px-16">
-          <p className="text-blue-400 font-semibold uppercase tracking-widest text-sm mb-4">
-            Precision Plastic Injection Mould Manufacturer
-          </p>
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 max-w-3xl">
-            Engineering<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
-              Precision
-            </span>{' '}
-            Moulds
-          </h1>
+          
+          {/* ── COMPANY NAME TRANSITION SIDE/HERO HEADING (Requirement 5) ── */}
+          <div
+            id="hero-company-heading"
+            className={`transition-all duration-500 ease-out origin-left mb-6 ${
+              isGlowing ? 'scale-105 filter drop-shadow-[0_0_25px_rgba(59,130,246,0.8)]' : ''
+            }`}
+            style={{
+              opacity: headingOpacity,
+              transform: `translateY(${headingTranslateY}px) scale(${headingScale})`,
+            }}
+          >
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-xs font-extrabold uppercase tracking-widest mb-3 backdrop-blur-md">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              Precision Plastic Injection Moulding
+            </div>
+            
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight tracking-tight">
+              MARUTHI{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-white">
+                TOOLINGS
+              </span>
+            </h1>
+          </div>
+
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-200 mb-6 max-w-3xl leading-snug">
+            Engineering Precision Moulds with Sub-Micron Accuracy
+          </h2>
+
           <p className="text-gray-300 text-lg md:text-xl max-w-xl mb-10 leading-relaxed">
             8+ years of expertise in high-cavitation, 2K/3K and pharma-grade injection
             moulds — manufactured in our state-of-the-art facility in Hyderabad.
           </p>
+
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => setCurrentPage('Contact Us')}

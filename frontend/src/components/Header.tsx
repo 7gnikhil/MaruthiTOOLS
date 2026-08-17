@@ -9,13 +9,58 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [transitioningLogo, setTransitioningLogo] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    let lastScrollY = window.scrollY;
+
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Header style change on scroll past 20px
+      setScrolled(currentScrollY > 20);
+
+      // Total navbar scroll hide / show logic (Requirement 4)
+      if (currentScrollY <= 20) {
+        setVisible(true); // Always visible at top
+      } else {
+        if (currentScrollY > lastScrollY && currentScrollY - lastScrollY > 4) {
+          // Scrolling down -> hide navbar completely
+          setVisible(false);
+        } else if (lastScrollY - currentScrollY > 4) {
+          // Scrolling up -> show navbar
+          setVisible(true);
+        }
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const handleCompanyNameClick = () => {
+    setMobileOpen(false);
+    setTransitioningLogo(true);
+
+    if (currentPage === 'Home') {
+      // Scroll smoothly to top so hero company heading comes into full view
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setCurrentPage('Home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Trigger transition event for HomePage hero heading
+    window.dispatchEvent(new CustomEvent('company-name-click'));
+
+    setTimeout(() => {
+      setTransitioningLogo(false);
+    }, 800);
+  };
 
   const NavLink: React.FC<{ pageName: Page }> = ({ pageName }) => (
     <button
@@ -32,12 +77,16 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
   );
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${
-      scrolled
-        ? 'bg-white shadow-lg border-b border-gray-100'
-        : 'bg-white/95 backdrop-blur-md shadow-sm'
-    }`}>
-      {/* Top bar */}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
+        visible ? 'translate-y-0' : '-translate-y-full pointer-events-none'
+      } ${
+        scrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
+          : 'bg-white/95 backdrop-blur-md shadow-sm'
+      }`}
+    >
+      {/* Top info bar */}
       <div className="bg-blue-700 text-white text-xs py-1.5 hidden md:block">
         <div className="container mx-auto px-6 flex justify-between items-center">
           <span>📍 A-42/3, Rd Number 9, IDA Kukatpally, Hyderabad</span>
@@ -48,29 +97,32 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between py-3">
 
-          {/* ── LOGO ───────────────────────────────────────── */}
+          {/* ── LOGO / COMPANY NAME (Requirement 5) ─────────── */}
           <button
-            onClick={() => { setCurrentPage('Home'); setMobileOpen(false); }}
-            className="flex items-center group"
-            aria-label="Go to homepage"
+            onClick={handleCompanyNameClick}
+            className={`flex items-center gap-3 group transition-transform duration-300 ${
+              transitioningLogo ? 'scale-105 opacity-90' : 'scale-100'
+            }`}
+            aria-label="Go to homepage and feature company name"
           >
-            {/* Company logo image — file: frontend/public/images/logo.png */}
+            {/* Logo Image */}
             <img
               src="/images/logo.png"
               alt="Maruthi Toolings"
-              className="h-12 w-auto object-contain group-hover:opacity-90 transition-opacity duration-200"
+              className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-200"
               onError={(e) => {
-                // Fallback text if logo.png not found yet
                 (e.target as HTMLImageElement).style.display = 'none';
-                const parent = (e.target as HTMLImageElement).parentElement;
-                if (parent && !parent.querySelector('.logo-fallback')) {
-                  const el = document.createElement('div');
-                  el.className = 'logo-fallback flex flex-col leading-none';
-                  el.innerHTML = '<span class="text-lg font-extrabold text-gray-900">Maruthi</span><span class="text-xs font-semibold text-blue-600 tracking-widest uppercase">Toolings</span>';
-                  parent.appendChild(el);
-                }
               }}
             />
+            {/* Company Name Text (Navbar Header Title) */}
+            <div className="flex flex-col leading-none text-left">
+              <span className="text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors tracking-tight">
+                MARUTHI
+              </span>
+              <span className="text-[10px] font-extrabold text-blue-600 tracking-widest uppercase">
+                TOOLINGS
+              </span>
+            </div>
           </button>
 
           {/* ── DESKTOP NAV ────────────────────────────────── */}
@@ -80,11 +132,11 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
             {NAV_LINKS_RIGHT.map(link => <NavLink key={link} pageName={link} />)}
           </nav>
 
-          {/* ── CTA + Hamburger ────────────────────────────── */}
+          {/* ── CTA + Mobile Toggle ────────────────────────── */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setCurrentPage('Contact Us')}
-              className="hidden md:inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-all duration-200"
+              className="hidden md:inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-xl transition-all duration-200 shadow-md shadow-blue-600/20"
             >
               Get a Quote
             </button>
@@ -105,14 +157,14 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
 
       {/* ── MOBILE MENU ──────────────────────────────────── */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-1">
+        <div className="lg:hidden border-t border-gray-100 bg-white px-6 py-4 space-y-1 shadow-xl">
           {[...NAV_LINKS_LEFT, ...NAV_LINKS_RIGHT].map(link => (
             <button
               key={link}
               onClick={() => { setCurrentPage(link); setMobileOpen(false); }}
               className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition ${
                 currentPage === link
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-blue-50 text-blue-700 font-bold'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -122,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
           <div className="pt-2">
             <button
               onClick={() => { setCurrentPage('Contact Us'); setMobileOpen(false); }}
-              className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl"
+              className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-xl shadow-md"
             >
               Get a Quote
             </button>

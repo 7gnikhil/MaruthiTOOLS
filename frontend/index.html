@@ -1,36 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" className="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
     <title>Maruthi Toolings | Precision Engineering</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-      body {
-        font-family: 'Inter', sans-serif;
+      :root {
+        --app-height: 100%;
       }
+      html, body {
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* Landscape orientation responsiveness */
+      @media (max-width: 900px) and (orientation: landscape) {
+        .landscape-compact-height {
+          max-height: 75vh !important;
+        }
+        .landscape-padding {
+          padding-top: 1rem !important;
+          padding-bottom: 1rem !important;
+        }
+      }
+
+      /* Touch target safety for mobile devices */
+      button, a {
+        touch-action: manipulation;
+      }
+
       /* Custom Scrollbar for Banner */
       .custom-scrollbar::-webkit-scrollbar {
-        height: 8px;
+        height: 6px;
+        width: 6px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
-        background-color: #4a5568; /* bg-gray-700 */
+        background-color: #1e293b;
         border-radius: 10px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: #3b82f6; /* blue-500 */
+        background-color: #3b82f6;
         border-radius: 10px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background-color: #2563eb; /* blue-600 */
+        background-color: #2563eb;
       }
     </style>
   </head>
-  <body>
+  <body className="bg-white text-gray-900 antialiased selection:bg-blue-500 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>

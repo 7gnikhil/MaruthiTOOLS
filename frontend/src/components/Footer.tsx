@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { submitInquiry } from '../api/maruthi-toolings.api';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenAdminInbox?: () => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onOpenAdminInbox }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
@@ -63,7 +67,7 @@ const Footer: React.FC = () => {
                   placeholder="Your Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   required
                 />
               </div>
@@ -73,22 +77,23 @@ const Footer: React.FC = () => {
                   rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   required
                 ></textarea>
               </div>
               <button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-500"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 disabled:bg-gray-500 text-sm"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Sending...' : 'Send'}
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
               {statusMessage && <p className="mt-2 text-center text-xs text-gray-300">{statusMessage}</p>}
             </form>
           </div>
         </div>
-        <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500">
+
+        <div className="mt-12 border-t border-gray-700 pt-6 text-center text-xs text-gray-500">
           <p>Copyright &copy; {new Date().getFullYear()} Maruthi Toolings. All Rights Reserved.</p>
         </div>
       </div>

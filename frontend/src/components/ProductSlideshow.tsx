@@ -1,35 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Product as ProductType } from '../types';
 
-// ─────────────────────────────────────────────────────────────────
-// ANATOMY — How to edit this slideshow:
-//
-// AUTO-PLAY SPEED   → Change `SLIDE_INTERVAL_MS` below (ms per slide)
-// SLIDE COLOURS     → `CATEGORY_GRADIENT` map — change from/to colours
-// IMAGE HEIGHT      → h-[60vh] on the img wrapper div
-// ZOOM STRENGTH     → scale() value in the `style` prop of the img
-// OVERLAY DARKNESS  → bg-black/XX on the gradient overlay div
-// TRANSITION SPEED  → duration-700 on the img className
-// DOT STYLE         → the `<button>` inside the dot map at the bottom
-// ARROW ICONS       → SVG paths in the prev/next button elements
-// TEXT POSITION     → the `absolute bottom-0` info panel
-// ADD A NEW SLIDE   → add to the `products` array in mock-data.ts
-// ─────────────────────────────────────────────────────────────────
-
-const SLIDE_INTERVAL_MS = 4000; // ← Change auto-play speed here
-
-const CATEGORY_GRADIENT: Record<string, string> = {
-  'Mould':         'from-blue-900 to-blue-700',
-  'CNC':           'from-purple-900 to-purple-700',
-  'EDM':           'from-amber-900 to-amber-700',
-  'End Component': 'from-emerald-900 to-emerald-700',
-};
+const SLIDE_INTERVAL_MS = 4500;
 
 interface SlideshowProps {
   products: ProductType[];
   sectionTitle: string;
   subtitle?: string;
-  accentColor?: string; // Tailwind text colour class e.g. 'text-blue-400'
+  accentColor?: string;
+  onSelectProduct?: (product: ProductType) => void;
+  hideTextOverlay?: boolean;
 }
 
 const ProductSlideshow: React.FC<SlideshowProps> = ({
@@ -37,6 +17,8 @@ const ProductSlideshow: React.FC<SlideshowProps> = ({
   sectionTitle,
   subtitle,
   accentColor = 'text-blue-400',
+  onSelectProduct,
+  hideTextOverlay = false,
 }) => {
   const [current, setCurrent] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -45,17 +27,15 @@ const ProductSlideshow: React.FC<SlideshowProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ── Scroll-triggered visibility (zoom-in effect) ──────────────
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.3 }
+      { threshold: 0.2 }
     );
     if (wrapperRef.current) observer.observe(wrapperRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // ── Auto-play ───────────────────────────────────────────────────
   const goTo = useCallback((index: number) => {
     if (transitioning) return;
     setTransitioning(true);
@@ -77,104 +57,110 @@ const ProductSlideshow: React.FC<SlideshowProps> = ({
   if (!products.length) return null;
 
   const slide = products[current];
-  const gradient = CATEGORY_GRADIENT[slide.category] || 'from-gray-900 to-gray-700';
 
   return (
-    <section className="mb-20" ref={wrapperRef}>
-      {/* Section heading */}
-      <div className="flex items-center gap-4 mb-6 px-0">
+    <section className="mb-14" ref={wrapperRef}>
+      {/* Section Header */}
+      <div className="flex items-center justify-between gap-4 mb-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800">{sectionTitle}</h2>
-          {subtitle && <p className="text-sm text-gray-400 mt-0.5">{subtitle}</p>}
+          <h2 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">{sectionTitle}</h2>
+          {subtitle && <p className="text-xs text-gray-500 mt-0.5 font-medium">{subtitle}</p>}
         </div>
-        <div className="flex-1 h-px bg-gradient-to-r from-blue-200 to-transparent" />
-        <span className={`text-xs font-semibold ${accentColor}`}>
-          {current + 1} / {products.length}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-bold bg-slate-900 text-cyan-400 px-3 py-1 rounded-full border border-slate-700 shadow-sm">
+            {String(current + 1).padStart(2, '0')} / {String(products.length).padStart(2, '0')}
+          </span>
+        </div>
       </div>
 
-      {/* Main slideshow viewport */}
+      {/* Main Slideshow Viewport */}
       <div
-        className={`relative overflow-hidden rounded-3xl shadow-2xl cursor-pointer
-                    transition-all duration-700 ease-out
-                    ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.97]'}`}
-        style={{ height: '60vh', minHeight: '360px', maxHeight: '520px' }}
+        className={`relative overflow-hidden rounded-3xl shadow-2xl group border border-slate-800
+                    transition-all duration-700 ease-out bg-gradient-to-b from-slate-950 via-slate-900 to-black
+                    h-[280px] sm:h-[340px] md:h-[400px] lg:h-[440px] landscape:h-[260px] sm:landscape:h-[340px]
+                    ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.98]'}`}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        {/* Background image with parallax zoom */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* Main Image with Ken Burns Slow Zoom Effect */}
+        <div
+          className="absolute inset-0 flex items-center justify-center p-4 cursor-pointer overflow-hidden"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectProduct?.(slide);
+          }}
+          title="Click image to expand in Special View"
+        >
           <img
             key={current}
             src={slide.imageUrl}
             alt={slide.name}
-            className={`w-full h-full object-cover transition-all duration-700 ease-out
-                        ${transitioning ? 'opacity-0 scale-110' : 'opacity-100'}
-                        ${isVisible ? 'scale-105' : 'scale-100'}`}
+            className={`w-full h-full object-contain transition-opacity duration-500 ease-out
+                        ${transitioning ? 'opacity-0 blur-sm' : 'opacity-100'}`}
             style={{
-              // Extra zoom when scrolled into view
-              transform: isVisible && !transitioning ? 'scale(1.06)' : 'scale(1)',
-              transition: 'transform 1s ease-out, opacity 0.35s ease',
+              animation: transitioning ? 'none' : `kenBurns ${SLIDE_INTERVAL_MS}ms ease-out forwards`,
             }}
-            onError={(e) => { (e.target as HTMLImageElement).src = '/images/placeholder-mould.svg'; }}
+            onError={(e) => { (e.target as HTMLImageElement).src = '/images/mould1.jpg'; }}
           />
         </div>
 
-        {/* Dark gradient overlay */}
-        <div className={`absolute inset-0 bg-gradient-to-t ${gradient} opacity-70`} />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
-
-        {/* ── Left info panel ─────────────────────────────── */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-          <div className="max-w-xl">
-            <span className={`inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3
-                             bg-white/15 backdrop-blur-sm text-white`}>
+        {/* Text Overlay (Only if not hidden) */}
+        {!hideTextOverlay && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-6 pointer-events-none">
+            <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full mb-1.5 bg-blue-500/20 text-cyan-300 border border-cyan-400/30">
               {slide.category}
             </span>
-            <h3 className="text-xl md:text-2xl font-bold text-white leading-snug mb-2">
-              {slide.name.trim()}
+            <h3 className="text-lg md:text-xl font-extrabold text-white leading-snug">
+              {slide.name}
             </h3>
-            <p className="text-white/75 text-sm leading-relaxed line-clamp-2">
+            <p className="text-gray-300 text-xs mt-1 line-clamp-1">
               {slide.description}
             </p>
           </div>
-        </div>
+        )}
 
-        {/* ── Prev / Next arrows ───────────────────────────── */}
+        {/* Prev / Next Floating Navigation Arrows */}
         {products.length > 1 && (
           <>
             <button
-              onClick={prev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full
-                         bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white
-                         flex items-center justify-center transition-all duration-200
-                         hover:scale-110 active:scale-95"
-              aria-label="Previous"
+              onClick={(e) => {
+                e.stopPropagation();
+                prev();
+              }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full
+                         bg-slate-900/80 hover:bg-blue-600 text-white border border-white/20 shadow-xl
+                         backdrop-blur-md flex items-center justify-center transition-all duration-200
+                         hover:scale-110 active:scale-95 z-20"
+              aria-label="Previous Mould Image"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
+
             <button
-              onClick={next}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full
-                         bg-white/15 hover:bg-white/30 backdrop-blur-sm text-white
-                         flex items-center justify-center transition-all duration-200
-                         hover:scale-110 active:scale-95"
-              aria-label="Next"
+              onClick={(e) => {
+                e.stopPropagation();
+                next();
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full
+                         bg-slate-900/80 hover:bg-blue-600 text-white border border-white/20 shadow-xl
+                         backdrop-blur-md flex items-center justify-center transition-all duration-200
+                         hover:scale-110 active:scale-95 z-20"
+              aria-label="Next Mould Image"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </>
         )}
 
-        {/* ── Progress bar (auto-play indicator) ───────────── */}
+        {/* Smooth Bottom Progress Bar */}
         {!paused && products.length > 1 && (
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20">
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-10">
             <div
-              className="h-full bg-white/70"
+              className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500"
               style={{
                 animation: `progressBar ${SLIDE_INTERVAL_MS}ms linear infinite`,
               }}
@@ -183,18 +169,20 @@ const ProductSlideshow: React.FC<SlideshowProps> = ({
         )}
       </div>
 
-      {/* ── Dot navigation + thumbnails ─────────────────────── */}
+      {/* Clean Dot Indicators */}
       {products.length > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-2">
-          {products.map((p, i) => (
+        <div className="mt-3 flex items-center justify-center gap-2">
+          {products.map((_, i) => (
             <button
               key={i}
-              onClick={() => goTo(i)}
-              title={p.name}
+              onClick={(e) => {
+                e.stopPropagation();
+                goTo(i);
+              }}
               className={`rounded-full transition-all duration-300 ${
                 i === current
-                  ? 'w-8 h-2.5 bg-blue-600'
-                  : 'w-2.5 h-2.5 bg-gray-300 hover:bg-blue-300'
+                  ? 'w-6 h-2 bg-blue-600 shadow-sm'
+                  : 'w-2 h-2 bg-gray-300 hover:bg-blue-400'
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />
@@ -202,8 +190,15 @@ const ProductSlideshow: React.FC<SlideshowProps> = ({
         </div>
       )}
 
-      {/* CSS keyframe for progress bar */}
       <style>{`
+        @keyframes kenBurns {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.08);
+          }
+        }
         @keyframes progressBar {
           from { width: 0%; }
           to   { width: 100%; }
