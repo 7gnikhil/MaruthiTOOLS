@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import process from 'process';
@@ -18,7 +19,9 @@ const __dirname = path.dirname(__filename);
 
 const startServer = async () => {
   try {
+    // Load local .env if present, otherwise environment variables from host (Render/Vercel)
     dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+    dotenv.config();
 
     await connectDB();
 
@@ -27,6 +30,11 @@ const startServer = async () => {
 
     app.use(cors());
     app.use(express.json({ limit: '10mb' }));
+
+    // ── Health Check ──────────────────────────────────────────────
+    app.get('/api/health', (_req, res) => {
+      res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
 
     // ── Inquiry / Contact Messages (MongoDB) ──────────────────────
     app.post('/api/inquiry', createInquiryHandler);
@@ -41,17 +49,26 @@ const startServer = async () => {
     app.post('/api/careers', createCareerHandler);
     app.delete('/api/careers/:id', deleteCareerHandler);
 
-    // ── Serve frontend build (production) ─────────────────────────
+    // ── Serve frontend build if exists, else API landing page ────
     const clientBuildPath = path.resolve(__dirname, '../../frontend/dist');
-    app.use(express.static(clientBuildPath));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(clientBuildPath, 'index.html'));
-    });
+    if (fs.existsSync(clientBuildPath)) {
+      app.use(express.static(clientBuildPath));
+      app.get('*', (_req, res) => {
+        res.sendFile(path.join(clientBuildPath, 'index.html'));
+      });
+    } else {
+      app.get('/', (_req, res) => {
+        res.json({
+          status: 'online',
+          service: 'Maruthi Toolings Backend API',
+          endpoints: ['/api/inquiry', '/api/applications', '/api/careers', '/api/health']
+        });
+      });
+    }
 
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
-      console.log(`🔗 Contact Inquiries: http://localhost:${PORT}/api/inquiry`);
-      console.log(`💼 Job Applications: http://localhost:${PORT}/api/applications`);
+      console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
