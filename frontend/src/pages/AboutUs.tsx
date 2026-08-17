@@ -7,12 +7,12 @@ const AboutUs: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold text-center text-blue-800 mb-4">About Maruthi Toolings</h1>
           <p className="text-lg text-gray-600 text-center mb-12">
-            Building a legacy of precision in plastic injection mould manufacturing for over 9 years.
+            Building a legacy of precision in plastic injection mould manufacturing with experience of 25+ Years.
           </p>
 
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <img 
-              src="https://thumbs.dreamstime.com/b/injection-molding-biomedical-products-clean-room-moulding-large-cleanroom-cleanroom-environment-typically-48273880.jpg?w=768" 
+            <img
+              src="https://thumbs.dreamstime.com/b/injection-molding-biomedical-products-clean-room-moulding-large-cleanroom-cleanroom-environment-typically-48273880.jpg?w=768"
               alt="Intricate injection mould detail showcasing precision engineering"
               className="rounded-lg shadow-xl"
             />
@@ -23,7 +23,7 @@ const AboutUs: React.FC = () => {
               </p>
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Vision</h2>
               <p className="text-gray-700">
-                To be the most trusted partner for complex and critical injection moulds in the automotive, pharmaceutical, and consumer goods industries, known for our unwavering commitment to quality and innovation.
+                To be the most trusted partner for complex and critical injection moulds in the automotive, pharmaceutical, Agro, f&G Caps & Closures and consumer goods industries, known for our unwavering commitment to quality and innovation.
               </p>
             </div>
           </div>
@@ -33,11 +33,11 @@ const AboutUs: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold text-blue-700 mb-2">Expertise</h3>
-                <p className="text-gray-600">8+ years of hands-on experience and a dedicated, highly skilled team.</p>
+                <p className="text-gray-600">30+ years of hands-on experience and a dedicated, highly skilled team.</p>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold text-blue-700 mb-2">Technology</h3>
-                <p className="text-gray-600">Our workshop is equipped with multi-axis CNC milling centers and high-precision EDM machines for ultimate precision.</p>
+                <p className="text-gray-600">Our workshop is equipped with multi-axis CNC milling centers, high-precision EDM machines, Surface grinding, lathe and Drilling machines for ultimate precision.</p>
               </div>
               <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold text-blue-700 mb-2">Commitment to Quality</h3>

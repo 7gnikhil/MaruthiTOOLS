@@ -31,15 +31,15 @@ function getBotResponse(
     };
   }
   if (q.includes('machine') || q.includes('cnc') || q.includes('edm')) {
-    navigate('Machinery');
+    navigate('Products');
     return {
-      text: "Opening our **Machinery** section! We use CNC and EDM machines for sub-micron precision.",
+      text: "Our facility uses Cosmos CVM 1060 CNC VMCs, AMS MCV 400 machines, and Sparkronix ZNC EDMs for sub-micron precision toolmaking.",
       choices: ['Our Services', 'Contact Us'],
     };
   }
   if (q.includes('product') || q.includes('catalogue') || q.includes('catalog')) {
     navigate('Products');
-    return { text: "Here's our full product catalogue! What are you looking for?", choices: ['Moulds', 'Machinery', 'End Components'] };
+    return { text: "Here's our full product catalogue! What are you looking for?", choices: ['Moulds', 'End Components'] };
   }
   if (q.includes('end component') || q.includes('component')) {
     navigate('End Components');
@@ -47,7 +47,7 @@ function getBotResponse(
   }
   if (q.includes('service')) {
     navigate('Services');
-    return { text: "We offer mould design, CNC machining, 2K/3K moulding, and maintenance services.", choices: ['Get a Quote'] };
+    return { text: "We offer mould design, CNC machining, ZNC EDM spark erosion, and maintenance services.", choices: ['Get a Quote'] };
   }
   if (q.includes('contact') || q.includes('quote') || q.includes('enquir') || q.includes('inquiry')) {
     navigate('Contact Us');
@@ -59,7 +59,7 @@ function getBotResponse(
   }
   if (q.includes('about') || q.includes('company') || q.includes('maruthi')) {
     navigate('About Us');
-    return { text: "Maruthi Toolings — 8+ years of precision injection mould manufacturing in Hyderabad.", choices: ['Our Services', 'Contact Us'] };
+    return { text: "Maruthi Toolings — 25+ years of precision injection mould manufacturing in Hyderabad.", choices: ['Our Services', 'Contact Us'] };
   }
   if (q.includes('location') || q.includes('address') || q.includes('where')) {
     return {
@@ -79,8 +79,8 @@ function getBotResponse(
   }
 
   return {
-    text: "I'm here to help! Ask me about our moulds, machinery, services, pricing, or location.",
-    choices: ['View Moulds', 'Machinery', 'Our Services', 'Contact Us', 'Send my details'],
+    text: "I'm here to help! Ask me about our moulds, services, pricing, or location.",
+    choices: ['View Moulds', 'Our Services', 'Contact Us', 'Send my details'],
   };
 }
 
@@ -89,7 +89,7 @@ const INIT_MESSAGES: Message[] = [
     id: 0,
     role: 'bot',
     text: "👋 Hello! I'm MT Assistant from Maruthi Toolings. How can I help you today?",
-    choices: ['View Moulds', 'View Machinery', 'Our Services', 'Get a Quote', 'Send my details'],
+    choices: ['View Moulds', 'End Components', 'Our Services', 'Get a Quote', 'Send my details'],
   },
 ];
 
@@ -202,8 +202,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ setCurrentPage }) => {
     }
 
     const pageMap: Record<string, Page> = {
-      'View Products': 'Products', 'View Moulds': 'Moulds', 'View Machinery': 'Machinery',
-      'Moulds': 'Moulds', 'Machinery': 'Machinery', 'End Components': 'End Components',
+      'View Products': 'Products', 'View Moulds': 'Moulds',
+      'Moulds': 'Moulds', 'End Components': 'End Components',
       'Our Services': 'Services', 'Contact Us': 'Contact Us', 'Get a Quote': 'Contact Us',
     };
     if (pageMap[text]) setCurrentPage(pageMap[text]);

@@ -2,7 +2,6 @@ export type Page =
   | 'Home'
   | 'Products'
   | 'Moulds'
-  | 'Machinery'
   | 'End Components'
   | 'Services'
   | 'About Us'

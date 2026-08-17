@@ -86,14 +86,6 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
           : 'bg-white/95 backdrop-blur-md shadow-sm'
       }`}
     >
-      {/* Top info bar */}
-      <div className="bg-blue-700 text-white text-xs py-1.5 hidden md:block">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <span>📍 A-42/3, Rd Number 9, IDA Kukatpally, Hyderabad</span>
-          <span>📞 +91 70951 70416 &nbsp;|&nbsp; ✉️ marutitooling@gmail.com</span>
-        </div>
-      </div>
-
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between py-3">
 

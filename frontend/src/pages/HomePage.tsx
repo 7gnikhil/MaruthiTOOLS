@@ -6,9 +6,17 @@ interface HomePageProps {
   setCurrentPage: (page: Page) => void;
 }
 
+// ── Hero background slides ──────────────────────────────────────
+const HERO_SLIDES = [
+  '/images/cnc-cosmos-cvm1060.png',
+  '/images/cnc-ams-mcv400.png',
+  '/images/edm-hero-2.png',
+  '/images/toolroom-facility-4.png',
+];
+
 // ── Stats counter ───────────────────────────────────────────────
 const stats = [
-  { value: '8+', label: 'Years of Experience' },
+  { value: '25+', label: 'Years of Experience' },
   { value: '500+', label: 'Moulds Delivered' },
   { value: '50+', label: 'Clients Served' },
   { value: '100%', label: 'Quality Assured' },
@@ -29,12 +37,17 @@ const sectors = [
   {
     icon: '🚗',
     title: 'Automotive',
-    desc: 'Complex 2K/3K moulds for dashboard and structural automotive parts.',
+    desc: 'Moulds for dashboard and structural automotive parts.',
   },
   {
     icon: '⚡',
     title: 'Industrial',
     desc: 'Robust enclosure, connector and housing moulds for industrial applications.',
+  },
+  {
+    icon: '🌾',
+    title: 'Agro',
+    desc: 'High-durability precision moulds for agricultural sprayers, drip irrigation fittings & agrochemical containers.',
   },
 ];
 
@@ -53,6 +66,15 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
   const heroRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
   const [isGlowing, setIsGlowing] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  // Auto-play hero background slideshow loop (5s crossfade)
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(slideTimer);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,7 +98,7 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
     };
   }, []);
 
-  // Calculate dynamic transition parameters based on scroll down / up
+  // Dynamic transition parameters based on scroll down
   const headingOpacity = Math.max(0, 1 - scrollY / 160);
   const headingTranslateY = -Math.min(scrollY * 0.5, 60);
   const headingScale = Math.max(0.85, 1 - scrollY / 600);
@@ -84,20 +106,31 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
   return (
     <div className="bg-white pt-16">
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
+      {/* ── HERO BANNER ───────────────────────────────────────── */}
       <section className="relative h-[92vh] min-h-[600px] flex items-center overflow-hidden bg-[#05101f]">
-        {/* Parallax bg */}
-        <div
-          ref={heroRef}
-          className="absolute inset-0 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1600&q=80')" }}
-        />
-        {/* Blue gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#05101f] via-[#05101fcc] to-transparent" />
+        
+        {/* Clean Fading Background Slideshow (No text overlay box) */}
+        <div ref={heroRef} className="absolute inset-0 transition-transform duration-300">
+          {HERO_SLIDES.map((url, idx) => (
+            <div
+              key={url}
+              className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
+                activeSlide === idx ? 'opacity-40 scale-105' : 'opacity-0 scale-100'
+              }`}
+              style={{
+                backgroundImage: `url('${url}')`,
+                transitionProperty: 'opacity, transform',
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Dark Blue gradient overlay for maximum text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#05101f] via-[#05101fe6] to-[#05101f66]" />
 
         <div className="relative z-10 container mx-auto px-6 md:px-16">
           
-          {/* ── COMPANY NAME TRANSITION SIDE/HERO HEADING (Requirement 5) ── */}
+          {/* ── COMPANY NAME TRANSITION ── */}
           <div
             id="hero-company-heading"
             className={`transition-all duration-500 ease-out origin-left mb-6 ${
@@ -122,12 +155,11 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
           </div>
 
           <h2 className="text-2xl md:text-4xl font-bold text-gray-200 mb-6 max-w-3xl leading-snug">
-            Engineering Precision Moulds with Sub-Micron Accuracy
+            Precision Injection Moulds 
           </h2>
 
           <p className="text-gray-300 text-lg md:text-xl max-w-xl mb-10 leading-relaxed">
-            8+ years of expertise in high-cavitation, 2K/3K and pharma-grade injection
-            moulds — manufactured in our state-of-the-art facility in Hyderabad.
+            25+ years of expertise in Injection Moulds, Compression Moulds— manufactured in our facility in Hyderabad.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -168,44 +200,74 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* ── ABOUT STRIP ──────────────────────────────────────── */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-blue-600 font-semibold uppercase tracking-widest text-sm mb-3">About Us</p>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                Maruthi Toolings —<br />Your Trusted Mould Partner
-              </h2>
-              <p className="text-gray-600 leading-relaxed mb-4">
-                Based in Hyderabad, we have been manufacturing high-precision plastic injection
-                moulds for over 8 years. Our facility houses state-of-the-art CNC machining
-                centres, EDM machines and a dedicated quality lab.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-8">
-                From a simple prototype to a 64-cavity pharma mould, we deliver end-to-end
-                tooling solutions with a commitment to precision, on-time delivery, and
-                transparent communication.
-              </p>
-              <button
-                onClick={() => setCurrentPage('About Us')}
-                className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800 transition"
-              >
-                Learn More About Us
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+      {/* ── SECTION 1: ABOUT SNAPSHOT (ALIGNED TO THE LEFT ON INITIAL SCROLL) ── */}
+      <section className="py-20 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-6 md:px-16">
+          <div className="max-w-3xl text-left">
+            <span className="text-blue-600 font-extrabold uppercase tracking-widest text-xs mb-2 block">
+              About Maruthi Toolings
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
+              25+ Years of Engineering Excellence
+            </h2>
+            <p className="text-gray-600 text-lg md:text-xl leading-relaxed mb-6">
+              Based in Hyderabad, we have been manufacturing high-precision plastic injection
+              moulds with experience of over 25+ years. Our facility houses state-of-the-art CNC machining
+              centres, EDM machines and a dedicated quality ToolRoom.
+            </p>
+            <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
+              From a simple prototype to a 48-cavity Caps & Closures mould, we deliver end-to-end
+              tooling solutions with a commitment to precision, on-time delivery, and
+              transparent communication.
+            </p>
+            <button
+              onClick={() => setCurrentPage('About Us')}
+              className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-200 font-bold px-6 py-3.5 rounded-xl transition duration-300 shadow-sm"
+            >
+              Read Full Company History →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 2: WHY CHOOSE US (ALIGNED TO THE RIGHT ON FURTHER SCROLL) ── */}
+      <section className="py-20 bg-gray-50 border-b border-gray-100">
+        <div className="container mx-auto px-6 md:px-16">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            
+            {/* Feature Cards on Left */}
+            <div className="grid grid-cols-2 gap-4 order-2 md:order-1">
               {whyUs.slice(0, 4).map((w) => (
-                <div key={w.title} className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-blue-200 hover:shadow-md transition-all">
+                <div key={w.title} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
                   <div className="text-3xl mb-3">{w.icon}</div>
                   <h3 className="font-bold text-gray-800 mb-1 text-sm">{w.title}</h3>
                   <p className="text-xs text-gray-500 leading-relaxed">{w.desc}</p>
                 </div>
               ))}
             </div>
+
+            {/* Main Text Content Aligned to the RIGHT */}
+            <div className="text-left md:text-right order-1 md:order-2">
+              <span className="text-blue-600 font-extrabold uppercase tracking-widest text-xs mb-2 block">
+                Our Advantage
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-6 leading-tight">
+                Why Partner With Us?
+              </h2>
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-8">
+                We combine decades of hands-on mould-making experience with modern CNC and EDM machinery to ensure your tooling runs reliably from day one.
+              </p>
+              <button
+                onClick={() => setCurrentPage('Contact Us')}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl transition inline-flex items-center gap-2 shadow-lg shadow-blue-600/30"
+              >
+                Discuss Your Project
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </button>
+            </div>
+
           </div>
         </div>
       </section>
@@ -217,15 +279,15 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
             <p className="text-blue-400 font-semibold uppercase tracking-widest text-sm mb-2">Industries We Serve</p>
             <h2 className="text-4xl font-bold text-white">Solutions for Every Sector</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {sectors.map((s) => (
               <div
                 key={s.title}
-                className="group bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-blue-500 rounded-2xl p-8 transition-all duration-300 cursor-default"
+                className="group bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-blue-500 rounded-2xl p-6 transition-all duration-300 cursor-default"
               >
                 <div className="text-4xl mb-4">{s.icon}</div>
                 <h3 className="text-white font-bold text-lg mb-2">{s.title}</h3>
-                <p className="text-gray-400 group-hover:text-white text-sm leading-relaxed transition-colors">{s.desc}</p>
+                <p className="text-gray-400 group-hover:text-white text-xs leading-relaxed transition-colors">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -257,17 +319,17 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
                 onClick={() => setCurrentPage('Moulds')}
                 className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="h-44 bg-gray-50 overflow-hidden">
+                <div className="h-48 bg-white overflow-hidden p-3 flex items-center justify-center border-b border-gray-100">
                   <img
                     src={p.imageUrl}
                     alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/images/placeholder-mould.svg'; }}
                   />
                 </div>
                 <div className="p-4">
                   <h3 className="text-sm font-bold text-gray-800 line-clamp-2 leading-snug">{p.name.trim()}</h3>
-                  <p className="text-xs text-gray-400 mt-1 line-clamp-2">{p.description}</p>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
                 </div>
               </div>
             ))}
@@ -294,36 +356,7 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-800 mb-1">{s.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{s.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <button
-              onClick={() => setCurrentPage('Services')}
-              className="inline-flex items-center gap-2 border border-blue-600 text-blue-600 font-semibold px-8 py-3 rounded-xl hover:bg-blue-600 hover:text-white transition"
-            >
-              All Services →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHY US (full list) ────────────────────────────────── */}
-      <section className="py-20 bg-blue-700">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-14">
-            <p className="text-blue-200 font-semibold uppercase tracking-widest text-sm mb-2">Why Choose Us</p>
-            <h2 className="text-4xl font-bold text-white">What Sets Us Apart</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {whyUs.map((w) => (
-              <div key={w.title} className="flex gap-4 bg-white/10 rounded-2xl p-6 border border-white/10">
-                <div className="text-2xl flex-shrink-0">{w.icon}</div>
-                <div>
-                  <h3 className="font-bold text-white mb-1">{w.title}</h3>
-                  <p className="text-blue-100 text-sm leading-relaxed">{w.desc}</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">{s.description}</p>
                 </div>
               </div>
             ))}
@@ -332,22 +365,18 @@ const HomePage: React.FC<HomePageProps> = ({ setCurrentPage }) => {
       </section>
 
       {/* ── CTA BANNER ───────────────────────────────────────── */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-3xl p-12 text-center">
-            <h2 className="text-4xl font-extrabold text-white mb-4">
-              Have a Mould Requirement?
-            </h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-xl mx-auto">
-              Send us your design or describe your requirements — we'll get back to you within 24 hours.
-            </p>
-            <button
-              onClick={() => setCurrentPage('Contact Us')}
-              className="bg-white text-blue-700 font-bold px-10 py-4 rounded-xl hover:bg-blue-50 transition-all shadow-xl text-lg"
-            >
-              Contact Us Today
-            </button>
-          </div>
+      <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-slate-900 text-white py-16">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Mould Project?</h2>
+          <p className="text-blue-200 max-w-xl mx-auto mb-8 text-base">
+            Contact our engineering team today for technical advice, feasibility feedback, or a competitive quote.
+          </p>
+          <button
+            onClick={() => setCurrentPage('Contact Us')}
+            className="bg-white text-blue-900 font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition shadow-xl text-base"
+          >
+            Request a Free Quote
+          </button>
         </div>
       </section>
 
