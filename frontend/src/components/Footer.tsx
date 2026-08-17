@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { submitInquiry } from '../api/maruthi-toolings.api';
 
-interface FooterProps {
-  onOpenAdminInbox?: () => void;
-}
-
-const Footer: React.FC<FooterProps> = ({ onOpenAdminInbox }) => {
+const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
@@ -95,15 +91,6 @@ const Footer: React.FC<FooterProps> = ({ onOpenAdminInbox }) => {
 
         <div className="mt-12 border-t border-gray-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
           <p>Copyright &copy; {new Date().getFullYear()} Maruthi Toolings. All Rights Reserved.</p>
-          
-          {onOpenAdminInbox && (
-            <button
-              onClick={onOpenAdminInbox}
-              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-700 text-cyan-400 font-bold px-3 py-1.5 rounded-lg border border-cyan-500/30 transition shadow-sm"
-            >
-              <span>📩 Owner Dashboard (View Messages & Applications)</span>
-            </button>
-          )}
         </div>
       </div>
     </footer>

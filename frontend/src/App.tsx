@@ -8,12 +8,10 @@ import Careers from './pages/Careers';
 import Services from './pages/Services';
 import HomePage from './pages/HomePage';
 import Chatbot from './components/Chatbot';
-import AdminInboxModal from './components/AdminInboxModal';
 import { Page } from './types';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('Home');
-  const [showAdminInbox, setShowAdminInbox] = useState(false);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -42,9 +40,8 @@ const App: React.FC = () => {
     <div className="bg-white min-h-screen">
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
       <main>{renderPage()}</main>
-      <Footer onOpenAdminInbox={() => setShowAdminInbox(true)} />
+      <Footer />
       <Chatbot setCurrentPage={setCurrentPage} />
-      {showAdminInbox && <AdminInboxModal onClose={() => setShowAdminInbox(false)} />}
     </div>
   );
 };
