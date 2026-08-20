@@ -76,12 +76,16 @@ PORT=5000
 ```
 
 
-**Screenshots 
+##Screenshots 
+
 <img width="2839" height="1519" alt="Screenshot 2026-08-20 225327" src="https://github.com/user-attachments/assets/02eb153c-8e02-47f5-8ba7-8ba513dff4af" />
+
 <img width="2834" height="1515" alt="Screenshot 2026-08-20 225356" src="https://github.com/user-attachments/assets/e18a808d-9e66-4ef2-a504-544c999e4787" />
-<img width="616" height="866" alt="Screenshot 2026-08-20 225453" src="https://github.com/user-attachments/assets/38b6235c-30c9-4d1e-9e89-ac01e557b099" />
+
 <img width="2843" height="1514" alt="Screenshot 2026-08-20 225441" src="https://github.com/user-attachments/assets/3c851984-10c1-435d-9554-19483d7a1538" />
+
 <img width="2822" height="1506" alt="Screenshot 2026-08-20 225418" src="https://github.com/user-attachments/assets/12ed21a9-7ff1-4f87-ae30-9ef991296ed3" />
 
+<img width="616" height="866" alt="Screenshot 2026-08-20 225453" src="https://github.com/user-attachments/assets/38b6235c-30c9-4d1e-9e89-ac01e557b099" />
 
 **
