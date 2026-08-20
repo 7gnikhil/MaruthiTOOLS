@@ -76,7 +76,7 @@ PORT=5000
 ```
 
 
-##Screenshots 
+## Screenshots 
 
 <img width="2839" height="1519" alt="Screenshot 2026-08-20 225327" src="https://github.com/user-attachments/assets/02eb153c-8e02-47f5-8ba7-8ba513dff4af" />
 
